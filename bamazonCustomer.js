@@ -38,5 +38,3 @@ function printing(obj){
     
     console.log(obj.prodcut_name+' | '+obj.department_name+' | '+obj.price+' | '+stock_quantity);
 }
-
-prodcut_name, department_name, price, stock_quantity
