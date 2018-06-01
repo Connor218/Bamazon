@@ -18,8 +18,23 @@ var connection = mysql.createConnection({
   connection.connect(function(err) {
     if (err) throw err;
     afterConnect();
+    start();
 });
 
+function start() {
+
+    var options = [
+      {
+        type:"list",
+        message:"Select an Option",
+        name:"option",
+        choices: [
+          "Buy a Poduct",
+          "Buy Multiple Units"
+        ]
+      }
+    ];
+}
 
 function afterConnect(){
     var query =  connection.query('SELECT * FROM product', function(err, res){
