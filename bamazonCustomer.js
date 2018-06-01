@@ -22,7 +22,7 @@ var connection = mysql.createConnection({
 
 
 function afterConnect(){
-    var query =  connection.query('SELECT * FROM products', function(err, res){
+    var query =  connection.query('SELECT * FROM product', function(err, res){
         if (err) throw err;
         // console.log(res);
         connection.end();
@@ -36,5 +36,5 @@ function afterConnect(){
 
 function printing(obj){
     
-    console.log(obj.prodcut_name+' | '+obj.department_name+' | '+obj.price+' | '+stock_quantity);
+    console.log(obj.id+' | '+obj.product_name+' | '+obj.department_name+' | '+obj.price+' | '+obj.stock_quantity);
 }
