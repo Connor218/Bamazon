@@ -34,7 +34,27 @@ function start() {
         ]
       }
     ];
-}
+
+    inquirer.prompt(options).then(function(response){
+
+        switch(response.option) {
+          
+          case "Buy a Product":
+    
+            buyProduct();
+    
+          break;
+    
+          case "Buy Multiple Units":
+    
+            buyProduct();
+    
+          break;
+          
+        }
+    
+      });
+    }
 
 function afterConnect(){
     var query =  connection.query('SELECT * FROM product', function(err, res){
@@ -48,6 +68,33 @@ function afterConnect(){
         console.log("===================================================")
     });
 }
+
+  function buyProduct() {
+
+    var question = [
+      {
+        type:"input",
+        message:"What product would you like?",
+        name:"product"
+      }
+    ];
+
+    inquirer.prompt(question).then(function(response) {
+
+      var query = connection.query(
+        "SELECT * FROM product WHERE ?",
+        {
+          product_name: response.product_name
+        },
+        function(err, res) {
+          
+          printing(res);
+        }
+      );
+
+    });
+
+  };
 
 function printing(obj){
     
