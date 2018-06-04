@@ -18,7 +18,7 @@ var connection = mysql.createConnection({
   connection.connect(function(err) {
     if (err) throw err;
     afterConnect();
-    start();
+    
 });
 
 function start() {
@@ -29,7 +29,7 @@ function start() {
         message:"Select an Option",
         name:"option",
         choices: [
-          "Buy a Poduct",
+          "Buy a Product",
           "Buy Multiple Units"
         ]
       }
@@ -60,43 +60,79 @@ function afterConnect(){
     var query =  connection.query('SELECT * FROM product', function(err, res){
         if (err) throw err;
         // console.log(res);
-        connection.end();
+      
         console.log("===================================================")
         for (let index = 0; index < res.length; index++) {
             printing(res[index]);
         }
         console.log("===================================================")
+        start();
     });
+ 
 }
 
-  function buyProduct() {
+function buyProduct() {
 
-    var question = [
-      {
-        type:"input",
-        message:"What product would you like?",
-        name:"product"
+  var question = [
+    {
+      type:"input",
+      message:"What product would you like? slect by product ID",
+      name:"product"
+    },
+    {
+      type:"input",
+      message:"what quanitiy?",
+      name:"amount"
+    }
+  ];
+
+  inquirer.prompt(question)
+  .then(function(response) {
+
+    var product_id = parseInt(response.product);
+    console.log(product_id);
+
+    var count = parseInt(response.amount);
+    console.log(count);
+
+    connection.query("SELECT * FROM product WHERE id = "+product_id, function(err, res) {
+
+      if(err){
+        console.log(err)
       }
-    ];
-
-    inquirer.prompt(question).then(function(response) {
-
-      var query = connection.query(
-        "SELECT * FROM product WHERE ?",
-        {
-          product_name: response.product_name
-        },
-        function(err, res) {
+      else{
+      
+        if(parseInt(res[0].stock_quantity) > count){
+          console.log("id", product_id)
+          // update db
+          connection.query("UPDATE product SET ? WHERE ?",[
+            {stock_quantity: parseInt(res[0].stock_quantity) - count}, {id: product_id}
+            ],
+            function(errs, results){
+            console.log(results);
+            if(errs){
+              console.log(errs)
+            }
+              console.log("your total is:", parseInt(res[0].price)*count);
+              afterConnect();
+          })
+          // let user know their total
           
-          printing(res);
         }
-      );
+        else {
+          console.log("sorry there isn't enough stock to cover your order!")
+        }
+          //printing(res);
+      }
+    }
 
-    });
+      
+    );
 
-  };
+  });
+};
 
 function printing(obj){
     
-    console.log(obj.id+' | '+obj.product_name+' | '+obj.department_name+' | '+obj.price+' | '+obj.stock_quantity);
+    console.log(obj.id+' | '+obj.product_name+' | '+obj.department_name+' | '+obj.price+' | '+obj.stock_quantity);  
 }
